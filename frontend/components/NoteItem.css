@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  aspect-ratio: 3 / 4;
+  border: 2px solid #000;
+  position: relative;
+  background: #fff;
+  cursor: pointer;
+
+  &:hover {
+    background: #f9f9f9;
+  }
+
+  .delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+}

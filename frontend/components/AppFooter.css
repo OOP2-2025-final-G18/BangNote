@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 16px;
+
+  .action-btn {
+    flex-grow: 1;
+    border: 2px solid #000;
+    background: #fff;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+
+    &:active {
+      background: #ddd;
+    }
+  }
+
+  .add-btn {
+    width: 80px;
+    flex-grow: 0;
+    border: 2px solid #000;
+    background: #fff;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:active {
+      background: #ddd;
+    }
+  }
+}
