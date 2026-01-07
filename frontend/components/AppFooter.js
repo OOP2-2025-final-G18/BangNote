@@ -2,7 +2,6 @@ export class AppFooter extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-
     this.selectedColor = "white";
     this.deadline = null;
     this.notifyEnabled = false;
@@ -37,7 +36,7 @@ export class AppFooter extends HTMLElement {
   }
 
   setupEvents() {
-    /* 色選択 */
+    // 色選択
     this.shadowRoot.querySelectorAll(".color").forEach(color => {
       color.addEventListener("click", () => {
         this.shadowRoot.querySelectorAll(".color")
@@ -48,15 +47,15 @@ export class AppFooter extends HTMLElement {
       });
     });
 
-    /* 通知ON/OFF */
+    // チェックON/OFF
     const checkbox = this.shadowRoot.querySelector("#notify-check");
-    checkbox.addEventListener("change", e => {
+    checkbox.addEventListener("change", (e) => {
       this.notifyEnabled = e.target.checked;
     });
 
-    /* 日付変更 */
+    // 日付変更
     this.shadowRoot.querySelector(".date-input")
-      .addEventListener("change", e => {
+      .addEventListener("change", (e) => {
         this.deadline = new Date(e.target.value);
         if (this.notifyEnabled) {
           this.scheduleNotification();
