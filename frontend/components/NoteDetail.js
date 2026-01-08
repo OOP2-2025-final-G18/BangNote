@@ -39,6 +39,24 @@ export class NoteDetail extends HTMLElement {
     `;
   }
 
+  setupEvents() {
+    /*ここから*/
+    const textarea = this.shadowRoot.querySelector("textarea");
+
+    // 入力検知 → AppFooterへ通知
+    textarea.addEventListener("input", () => {
+      const hasText = textarea.value.trim().length > 0;
+
+      this.dispatchEvent(
+        new CustomEvent("note-input", {
+          detail: { hasText },
+          bubbles: true,
+          composed: true,
+        })
+      );
+    });
+  }
+
   updateView() {
     if ($mode.get() === "TODO") {
       this.textarea.classList.add("hidden");
@@ -93,24 +111,6 @@ export class NoteDetail extends HTMLElement {
     this.todoArea.appendChild(row);
 
     input.focus();
-  }
-
-  setupEvents() {
-    /*ここから*/
-    const textarea = this.shadowRoot.querySelector("textarea");
-
-    // 入力検知 → AppFooterへ通知
-    textarea.addEventListener("input", () => {
-      const hasText = textarea.value.trim().length > 0;
-
-      this.dispatchEvent(
-        new CustomEvent("note-input", {
-          detail: { hasText },
-          bubbles: true,
-          composed: true,
-        })
-      );
-    });
   }
 
   changeColor(color) {

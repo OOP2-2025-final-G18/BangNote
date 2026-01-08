@@ -3,36 +3,87 @@
   width: 100%;
   height: 100%;
   gap: 16px;
+  align-items: center;
+  box-sizing: border-box;
+}
 
-  .action-btn {
-    flex-grow: 1;
-    border: 2px solid #000;
-    background: #fff;
-    font-size: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-weight: bold;
+/* 左側 全体枠 */
+.control-area {
+  flex-grow: 1;
+  border: 3px solid #000;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-sizing: border-box;
+}
 
-    &:active {
-      background: #ddd;
-    }
-  }
+/* 色パネル */
+.colors {
+  display: flex;
+  gap: 14px;
+}
 
-  .add-btn {
-    width: 80px;
-    flex-grow: 0;
-    border: 2px solid #000;
-    background: #fff;
-    font-size: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
+.color {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid #000;
+  cursor: pointer;
+  box-sizing: border-box;
+}
 
-    &:active {
-      background: #ddd;
-    }
-  }
+/* 色（淡色） */
+.white { background: #fff; }
+.red   { background: #f2c6c6; border-color: #b55; }
+.blue  { background: #d6e2f5; border-color: #7a95c9; }
+.green { background: #dbead4; border-color: #7fa86c; }
+
+.color.selected {
+  outline: 3px solid #000;
+  outline-offset: 2px;
+}
+
+/* 通知日エリア */
+.notify {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 1rem;
+  user-select: none;
+}
+
+.notify input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.notify label {
+  cursor: pointer;
+}
+
+/* 日付 */
+.date-input {
+  font-size: 1rem;
+  padding: 4px 6px;
+  border: 2px solid #000;
+}
+
+/* ＋ボタン */
+.add-btn {
+  width: 70px;
+  height: 70px;
+  border: 3px solid #000;
+  background: #fff;
+  font-size: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.add-btn:active {
+  background: #ddd;
 }
