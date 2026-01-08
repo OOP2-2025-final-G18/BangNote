@@ -20,6 +20,33 @@
       outline: none;
     }
   }
+
+  .hidden {
+    display: none;
+  }
+
+  .todo-area {
+    padding: 20px;
+  }
+
+  .todo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .todo-row input[type="text"] {
+    flex: 1;
+    border: none;
+    font-size: 1.1rem;
+    outline: none;
+  }
+
+  textarea.white, .todo-area.white { background: #ffffff; }
+  textarea.red,   .todo-area.red   { background: #f2c6c6; }
+  textarea.blue,  .todo-area.blue  { background: #d6e2f5; }
+  textarea.green, .todo-area.green { background: #dbead4; }
 }
 
 /* メモのときのスタイル */
