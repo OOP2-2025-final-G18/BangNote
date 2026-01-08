@@ -1,21 +1,42 @@
+/* components/AppHeader.css */
 :host {
   display: block;
+}
 
-  .tabs {
-    display: flex;
-    border: 2px solid #000;
-    background: #fff;
+.tabs {
+  display: flex;
+  border: 2px solid #000;
+  background: #fff;
+  cursor: pointer;
+  user-select: none; /* テキスト選択を防止 */
+}
 
-    > div {
-      padding: 10px 30px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1.2rem;
+.tab-item {
+  padding: 10px 40px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+  flex: 1;
+  transition: background 0.2s, color 0.2s;
+}
 
-      &[data-active] {
-        background: #000;
-        color: #fff;
-      }
-    }
-  }
+/* K19117担当：アクティブな方のボタン（黒背景・白文字） */
+.active {
+  background: #000;
+  color: #fff;
+}
+
+/* 非アクティブな方のボタン */
+.inactive {
+  background: #fff;
+  color: #000;
+}
+
+/* ボタンの間の境界線 */
+.tab-item:first-child {
+  border-right: 2px solid #000;
+}
+
+.tab-item:hover {
+  opacity: 0.8;
 }
