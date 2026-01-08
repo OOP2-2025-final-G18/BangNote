@@ -1,3 +1,6 @@
+import "./NoteDetailInput/index.js";
+import "./NoteDetailOption/index.js";
+
 export class NoteDetail extends HTMLElement {
   constructor() {
     super();
@@ -10,8 +13,9 @@ export class NoteDetail extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = `
-      <link rel="stylesheet" href="./components/NoteDetail.css">
-      <textarea placeholder="メモを入力..."></textarea>
+      <link rel="stylesheet" href="./components/NoteDetail/style.css">
+      <note-detail-input></note-detail-input>
+      <note-detail-option></note-detail-option>
     `;
   }
 }

@@ -10,7 +10,7 @@ export class NoteItem extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = `
-      <link rel="stylesheet" href="./components/NoteItem.css">
+      <link rel="stylesheet" href="./components/NoteItem/style.css">
       <div class="delete-btn">🗑️</div>
       <div class="content">
         <!-- コンテンツのプレビューなど -->

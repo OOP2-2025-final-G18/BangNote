@@ -1,8 +1,7 @@
-import "./components/BangNoteApp.js";
-import "./components/AppHeader.js";
-import "./components/NoteList.js";
-import "./components/NoteItem.js";
-import "./components/NoteDetail.js";
-import "./components/AppFooter.js";
+import "./components/BangNoteApp/index.js";
+import "./components/TypeSwitch/index.js";
+import "./components/NoteList/index.js";
+import "./components/NoteItem/index.js";
+import "./components/NoteDetail/index.js";
 
 console.log("BangNote App Initialized");

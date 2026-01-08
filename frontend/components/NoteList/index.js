@@ -1,4 +1,4 @@
-import "./NoteItem.js";
+import "../NoteItem/index.js";
 
 export class NoteList extends HTMLElement {
   constructor() {
@@ -12,7 +12,7 @@ export class NoteList extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = `
-      <link rel="stylesheet" href="./components/NoteList.css">
+      <link rel="stylesheet" href="./components/NoteList/style.css">
       <div class="grid">
         <note-item></note-item>
         <note-item></note-item>
