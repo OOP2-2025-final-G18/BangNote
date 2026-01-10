@@ -34,7 +34,6 @@ export class NoteDetailInput extends HTMLElement {
    * @param {NoteDetailWith<"TODO">} note
    */
   #renderTodoNote(note) {
-    console.log(note);
     return `<div>
       <ul>
         ${note.content.map((t) => `<li>${t.text}</li>`).join("")}

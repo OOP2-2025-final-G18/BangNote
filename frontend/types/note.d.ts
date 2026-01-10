@@ -7,12 +7,12 @@ declare global {
      */
     color: string;
     /**
-     * 日付 (ISO 8601 Date String 形式)
+     * 日付 (ISO 8601 Date String 形式) or null (未設定)
      *
      * - メモノート: 通知日
      * - TODOノート: 締切日
      */
-    date: string;
+    date: string | null;
   };
 
   type NoteMeta = {

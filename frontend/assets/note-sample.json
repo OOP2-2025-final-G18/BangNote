@@ -3,7 +3,7 @@
     "type": "MEMO",
     "content": "サンプルメモ",
     "option": {
-      "color": "#FFEE93",
+      "color": "#FF7A7A",
       "date": "2025-12-31"
     },
     "meta": {
@@ -24,7 +24,7 @@
       }
     ],
     "option": {
-      "color": "#A0E7E5",
+      "color": "#FF7AFF",
       "date": "2025-11-30"
     },
     "meta": {
@@ -36,12 +36,49 @@
     "type": "MEMO",
     "content": "別のメモ例",
     "option": {
-      "color": "#B4F8C8",
+      "color": "#7A7AFF",
       "date": null
     },
     "meta": {
       "id": "u9q4ypjdju6o43y1sc4st8y7",
       "createdAt": "2025-10-10T15:30:00Z"
+    }
+  },
+  {
+    "type": "MEMO",
+    "content": "長いメモテスト.\nあのイーハトーヴォのすきとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。　またそのなかでいっしょになったたくさんのひとたち、ファゼーロとロザーロ、羊飼のミーロや、顔の赤いこどもたち、地主のテーモ、山猫博士のボーガント・デストゥパーゴなど、いまこの暗い巨きな石の建物のなかで考えていると、みんなむかし風のなつかしい青い幻燈のように思われます。では、わたくしはいつかの小さなみだしをつけながら、しずかにあの年のイーハトーヴォの五月から十月までを書きつけましょう。",
+    "option": {
+      "color": "#7AFF7A",
+      "date": "2025-12-25"
+    },
+    "meta": {
+      "id": "as8f7g6h5j4k3l21m0n9o8p7q",
+      "createdAt": "2025-10-15T09:45:00Z"
+    }
+  },
+  {
+    "type": "TODO",
+    "content": [
+      {
+        "text": "買い物に行く",
+        "completed": false
+      },
+      {
+        "text": "レポートを書く",
+        "completed": false
+      },
+      {
+        "text": "友達に電話する",
+        "completed": true
+      }
+    ],
+    "option": {
+      "color": "#FFFF7A",
+      "date": null
+    },
+    "meta": {
+      "id": "z1x2c3v4b5n6m7a8s9d0f1g2h",
+      "createdAt": "2025-10-20T14:20:00Z"
     }
   }
 ]

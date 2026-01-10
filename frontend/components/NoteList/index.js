@@ -18,7 +18,12 @@ export class NoteList extends HTMLElement {
       console.log("  -> [NoteList] ノート一覧の変更検知:", notes);
       console.log("  -> [NoteList] モード変更の検知:", mode);
 
-      this.render(notes.filter((note) => note.type === mode));
+      // TODO (@rio49k): モードに応じたノート一覧のフィルタリングを実装する.
+      // `render` 関数に渡すノート一覧を, 選択されているモードに応じて絞り込む.
+      //
+      // - `MEMO` モードが選択されているとき (= `$mode` が `"MEMO"` のとき) はメモノートのみ表示
+      // - `TODO` モードが選択されているとき (= `$mode` が `"TODO"` のとき) はTODOノートのみ表示
+      this.render(notes);
     });
   }
 
