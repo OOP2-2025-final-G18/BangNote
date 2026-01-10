@@ -9,25 +9,29 @@ export class TypeSwitch extends HTMLElement {
   connectedCallback() {
     this.render();
 
-    $mode.subscribe((value) => {
-      this.updateActiveTab();
-    });
+    const tabs = this.shadowRoot.querySelectorAll(".tabs > div");
 
-    this.shadowRoot.querySelectorAll(".tabs > div").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        $mode.set(tab.textContent);
+    /**
+     * モード変更時のタブの更新
+     */
+    $mode.subscribe((mode) => {
+      console.log("  -> [TypeSwitch] モード変更検知:", mode);
+      tabs.forEach((tab) => {
+        tab.toggleAttribute("data-active", tab.textContent === mode);
       });
     });
-  }
 
-  updateActiveTab() {
-    const tabs = this.shadowRoot.querySelectorAll(".tabs > div");
-    tabs.forEach((tab) => {
-      if (tab.textContent === $mode.get()) {
-        tab.setAttribute("data-active", "");
-      } else {
-        tab.removeAttribute("data-active");
-      }
+    /**
+     * タブのクリック時の設定
+     */
+    this.shadowRoot.querySelectorAll(".tabs > div").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        console.log(
+          "<- [TypeSwitch] タブクリックによるモード変更:",
+          tab.textContent,
+        );
+        $mode.set(tab.textContent);
+      });
     });
   }
 

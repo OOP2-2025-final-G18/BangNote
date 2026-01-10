@@ -4,4 +4,4 @@ import "./components/NoteList/index.js";
 import "./components/NoteItem/index.js";
 import "./components/NoteDetail/index.js";
 
-console.log("BangNote App Initialized");
+console.log("=== BangNote App Initialized ===");

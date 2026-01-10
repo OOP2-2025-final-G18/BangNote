@@ -19,3 +19,15 @@
     line-height: 1;
   }
 }
+
+/* メモモードのときのスタイル */
+:host:has(.content[data-note-type="MEMO"]) {
+  /* 分かりやすいようにとりあえず赤枠にしています */
+  border-color: red;
+}
+
+/* TODOモードのときのスタイル */
+:host:has(.content[data-note-type="TODO"]) {
+  /* 分かりやすいようにとりあえず青枠にしています */
+  border-color: blue;
+}
