@@ -4,60 +4,72 @@
   width: 100%;
   box-sizing: border-box;
   border: 2px solid;
-
-  .content {
-    height: 100%;
-    width: 100%;
-
-    textarea {
-      width: 100%;
-      height: 100%;
-      border: none;
-      resize: none;
-      padding: 20px;
-      box-sizing: border-box;
-      font-size: 1.2rem;
-      outline: none;
-    }
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  .todo-area {
-    padding: 20px;
-  }
-
-  .todo-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-  }
-
-  .todo-row input[type="text"] {
-    flex: 1;
-    border: none;
-    font-size: 1.1rem;
-    outline: none;
-  }
-
-  textarea.white, .todo-area.white { background: #ffffff; }
-  textarea.red,   .todo-area.red   { background: #f2c6c6; }
-  textarea.blue,  .todo-area.blue  { background: #d6e2f5; }
-  textarea.green, .todo-area.green { background: #dbead4; }
 }
 
-/* メモのときのスタイル */
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+textarea {
+  width: 100%;
+  border: none;
+  resize: none;
+  padding: 20px;
+  box-sizing: border-box;
+  font-size: 1.2rem;
+  outline: none;
+  flex: 1;
+}
+
+.hidden {
+  display: none;
+}
+
+.todo-area {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  border: 1px dashed #ccc;
+  box-sizing: border-box;
+}
+
+.todo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.todo-row input[type="text"] {
+  flex: 1;
+  border: none;
+  font-size: 1.1rem;
+  outline: none;
+}
+
+textarea.white,
+.todo-area.white {
+  background: #fff;
+}
+textarea.red,
+.todo-area.red {
+  background: #f2c6c6;
+}
+textarea.blue,
+.todo-area.blue {
+  background: #d6e2f5;
+}
+textarea.green,
+.todo-area.green {
+  background: #dbead4;
+}
+
 :host:has(.content[data-note-type="MEMO"]) {
-  /* 分かりやすいようにとりあえず赤枠にしています */
   border-color: red;
 }
-
-/* TODO のときのスタイル */
 :host:has(.content[data-note-type="TODO"]) {
-  /* 分かりやすいようにとりあえず青枠にしています */
   border-color: blue;
 }
- 

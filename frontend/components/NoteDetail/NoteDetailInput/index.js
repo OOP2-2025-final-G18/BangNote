@@ -1,12 +1,8 @@
-import { effect } from "https://cdn.jsdelivr.net/npm/nanostores@0.10.3/+esm";
-import { $mode } from "../stores/mode.js";
-import { $noteDetail } from "../stores/noteDetail.js";
+import { $mode } from "../../../stores/mode.js";
+import { effect } from "https://esm.run/nanostores";
+import { $noteDetail } from "../../../stores/note.js";
 
-export class NoteDetail extends HTMLElement {
-  mode;
-  textarea;
-  todoArea;
-
+export class NoteDetailInput extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -14,17 +10,36 @@ export class NoteDetail extends HTMLElement {
 
   connectedCallback() {
     this.render();
-    this.setupEvents();
+    this.textarea = this.shadowRoot.querySelector("textarea");
+    this.todoArea = this.shadowRoot.querySelector(".todo-area");
 
-    // ===== 追加：ストア変更を監視して再描画 =====
+    // MEMO/TODO切替の監視
+    $mode.subscribe(() => {
+      this.render();
+      this.textarea = this.shadowRoot.querySelector("textarea");
+      this.todoArea = this.shadowRoot.querySelector(".todo-area");
+      this.updateView();
+      this.setupEvents();
+    });
+
+    // MEMOのコマンド監視
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && this.textarea) {
+        this.detectCommandFromMemo();
+      }
+    });
+
+    // 色変更イベント
+    document.addEventListener("color-change", (e) => {
+      this.changeColor(e.detail.color);
+    });
+
+    // $noteDetail 変更監視（TODOレンダリング）
     effect(() => {
       const note = $noteDetail.get();
-      if (!note) return;
-
-      if ($mode.get() === "MEMO" && this.textarea) {
-        if (this.textarea.value !== note.content) {
-          this.textarea.value = note.content ?? "";
-        }
+      if ($mode.get() === "TODO" && note?.content) {
+        this.todoArea.innerHTML = "";
+        note.content.forEach((t) => this.addTodoRow(t.text, t.done));
       }
     });
   }
@@ -34,58 +49,52 @@ export class NoteDetail extends HTMLElement {
     const note = $noteDetail.get();
 
     this.shadowRoot.innerHTML = `
-      <style>
-        textarea {
-          width: 100%;
-          height: 100%;
-          border: none;
-          resize: none;
-          padding: 20px;
-          font-size: 1.2rem;
-          box-sizing: border-box;
-          outline: none;
-        }
-        .todo-row {
-          display: flex;
-          gap: 8px;
-          margin-bottom: 8px;
-        }
-      </style>
-
-      ${
-        mode === "MEMO"
-          ? `
-          <textarea placeholder="メモを入力...">
-            ${note?.content ?? ""}
-          </textarea>
-        `
-          : `
-          <div class="todo-area"></div>
-        `
-      }
+      <link rel="stylesheet" href="./components/NoteDetail/NoteDetailInput/style.css">
+      <div class="content" data-note-type="${mode}">
+        <textarea placeholder="メモを入力...">${
+          mode === "MEMO" ? note?.content ?? "" : ""
+        }</textarea>
+        <div class="todo-area ${mode === "TODO" ? "" : "hidden"}"></div>
+      </div>
     `;
 
     this.textarea = this.shadowRoot.querySelector("textarea");
     this.todoArea = this.shadowRoot.querySelector(".todo-area");
 
-    if (mode === "TODO" && Array.isArray(note?.content)) {
-      note.content.forEach((todo) => {
-        this.addTodoRow(todo.text, todo.done);
-      });
-    }
+    this.updateView();
+    this.setupEvents();
   }
 
   setupEvents() {
-    // ===== 追加：MEMO入力をストアへ反映 =====
-    this.textarea?.addEventListener("input", () => {
+    if (!this.textarea) return;
+    this.textarea.addEventListener("input", () => {
       const current = $noteDetail.get();
-      if (!current || current.type !== "MEMO") return;
-
-      $noteDetail.set({
-        ...current,
-        content: this.textarea.value,
-      });
+      $noteDetail.set({ ...current, content: this.textarea.value });
     });
+  }
+
+  updateView() {
+    if ($mode.get() === "TODO") {
+      this.textarea?.classList.add("hidden");
+      this.todoArea.classList.remove("hidden");
+      if (this.todoArea.children.length === 0) this.addTodoRow();
+    } else {
+      this.textarea?.classList.remove("hidden");
+      this.todoArea.classList.add("hidden");
+    }
+  }
+
+  detectCommandFromMemo() {
+    if (!this.textarea) return;
+    const lines = this.textarea.value.split("\n");
+    const lastLine = lines[lines.length - 1];
+
+    if (lastLine === "!TODO") {
+      lines.pop();
+      this.textarea.value = lines.join("\n");
+      $mode.set("TODO");
+      this.updateView();
+    }
   }
 
   addTodoRow(text = "", done = false) {
@@ -99,39 +108,45 @@ export class NoteDetail extends HTMLElement {
     const input = document.createElement("input");
     input.type = "text";
     input.value = text;
+    input.placeholder = "TODOを入力";
+
+    const updateStore = () => {
+      const todos = [...this.todoArea.querySelectorAll(".todo-row")].map(
+        (r) => ({
+          text: r.querySelector("input[type=text]").value,
+          done: r.querySelector("input[type=checkbox]").checked,
+        })
+      );
+      $noteDetail.set({ ...$noteDetail.get(), content: todos });
+    };
+
+    checkbox.addEventListener("change", updateStore);
+    input.addEventListener("input", updateStore);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        this.addTodoRow();
+      }
+      if (input.value === "!MEMO") {
+        $mode.set("MEMO");
+        this.updateView();
+      }
+    });
 
     row.appendChild(checkbox);
     row.appendChild(input);
     this.todoArea.appendChild(row);
+    input.focus();
 
-    // ===== 追加：TODO変更をストアに同期 =====
-    checkbox.addEventListener("change", () => this.syncTodoToStore());
-    input.addEventListener("input", () => this.syncTodoToStore());
-
-    // 既存：Enterで次のTODO追加
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        this.addTodoRow();
-      }
-    });
+    updateStore();
   }
 
-  // ===== 追加：TODO全体をストアへ反映 =====
-  syncTodoToStore() {
-    const rows = [...this.todoArea.querySelectorAll(".todo-row")];
-    const todos = rows.map((row) => ({
-      text: row.querySelector("input[type=text]").value,
-      done: row.querySelector("input[type=checkbox]").checked,
-    }));
-
-    const current = $noteDetail.get();
-    if (!current || current.type !== "TODO") return;
-
-    $noteDetail.set({
-      ...current,
-      content: todos,
-    });
+  changeColor(color) {
+    const target = $mode.get() === "TODO" ? this.todoArea : this.textarea;
+    if (!target) return;
+    target.classList.remove("white", "red", "blue", "green");
+    target.classList.add(color);
   }
 }
 
-customElements.define("note-detail", NoteDetail);
+customElements.define("note-detail-input", NoteDetailInput);
