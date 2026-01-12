@@ -127,6 +127,30 @@ export class NoteDetailInput extends HTMLElement {
         e.preventDefault();
         this.addTodoRow();
       }
+
+      //空の状態でBackspace/Deleteを押したら削除
+      if ((e.key === "Backspace" || e.key === "Delete") && input.value === "") {
+        e.preventDefault();
+
+        // 最後の1つは残す
+        if (this.todoArea.children.length > 1) {
+          const prevRow = row.previousElementSibling;
+          row.remove();
+
+          // 前の行にフォーカス移動
+          if (prevRow) {
+            const prevInput = prevRow.querySelector("input[type=text]");
+            prevInput?.focus();
+            prevInput?.setSelectionRange(
+              prevInput.value.length,
+              prevInput.value.length
+            );
+          }
+
+          updateStore();
+        }
+      }
+
       if (input.value === "!MEMO") {
         $mode.set("MEMO");
         this.updateView();
