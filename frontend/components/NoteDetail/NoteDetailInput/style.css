@@ -6,6 +6,9 @@
   border: 2px solid;
 }
 
+/* =========================
+  共通レイアウト
+========================= */
 .content {
   display: flex;
   flex-direction: column;
@@ -13,8 +16,12 @@
   width: 100%;
 }
 
+/* =========================
+  MEMO
+========================= */
 textarea {
   width: 100%;
+  height: 100%;
   border: none;
   resize: none;
   padding: 20px;
@@ -22,18 +29,22 @@ textarea {
   font-size: 1.2rem;
   outline: none;
   flex: 1;
+
+  /* ★ ここ重要：MEMO の背景は textarea に付ける */
+  background: #ffffff;
 }
 
-.hidden {
-  display: none;
-}
-
+/* =========================
+  TODO
+========================= */
 .todo-area {
   flex: 1;
   padding: 20px;
-  overflow-y: auto;
-  border: 1px dashed #ccc;
   box-sizing: border-box;
+  overflow-y: auto;
+
+  /* ★ TODO の背景は todo-area に付ける */
+  background: #ffffff;
 }
 
 .todo-row {
@@ -43,33 +54,63 @@ textarea {
   margin-bottom: 8px;
 }
 
+.todo-row input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
 .todo-row input[type="text"] {
   flex: 1;
   border: none;
   font-size: 1.1rem;
   outline: none;
+  background: transparent;
 }
 
-textarea.white,
-.todo-area.white {
-  background: #fff;
+/* =========================
+  非表示制御
+========================= */
+.hidden {
+  display: none;
 }
-textarea.red,
+
+/* =========================
+  カラーバリエーション
+========================= */
+/* MEMO */
+textarea.white {
+  background: #ffffff;
+}
+textarea.red {
+  background: #f2c6c6;
+}
+textarea.blue {
+  background: #d6e2f5;
+}
+textarea.green {
+  background: #dbead4;
+}
+
+/* TODO */
+.todo-area.white {
+  background: #ffffff;
+}
 .todo-area.red {
   background: #f2c6c6;
 }
-textarea.blue,
 .todo-area.blue {
   background: #d6e2f5;
 }
-textarea.green,
 .todo-area.green {
   background: #dbead4;
 }
 
+/* =========================
+  モード別枠線（確認用）
+========================= */
 :host:has(.content[data-note-type="MEMO"]) {
   border-color: red;
 }
+
 :host:has(.content[data-note-type="TODO"]) {
   border-color: blue;
 }
