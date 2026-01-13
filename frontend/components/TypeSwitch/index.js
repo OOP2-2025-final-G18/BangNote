@@ -15,9 +15,19 @@ export class TypeSwitch extends HTMLElement {
     $mode.subscribe((mode) => {
       console.log("  -> [TypeSwitch] モード変更検知:", mode);
 
-      // TODO (@kouro0328): タブのアクティブ状態の切り替えを実装する.
-      // - 選択されているモードに対応するタブに `data-active` 属性を付与する
-      // - それ以外のタブからは `data-active` 属性を削除する
+      // 全てのタブを取得
+      const tabs = this.shadowRoot.querySelectorAll(".tabs > div");
+      
+      tabs.forEach((tab) => {
+        // タブのテキストと現在のモードが一致するか確認
+        if (tab.textContent.trim() === mode) {
+          // 選択されているモードに対応するタブに `data-active` 属性を付与
+          tab.setAttribute("data-active", "");
+        } else {
+          // それ以外のタブからは `data-active` 属性を削除
+          tab.removeAttribute("data-active");
+        }
+      });
     });
 
     /**
@@ -30,14 +40,12 @@ export class TypeSwitch extends HTMLElement {
           tab.textContent,
         );
 
-        // TODO (@kouro0328): タブクリック時のモード変更を実装する.
-        // モードの変更はほかのコンポーネントにも伝えないといけないので, `$mode` ストアを使います.
-        // `$mode` ストアが定義されている `stores/mode.js` にサンプルコードがあります.
-        //
-        // - クリックされたタブに対応するモードを `$mode` に設定する
-        //   - 例えば、`MEMO` タブがクリックされたときは `$mode.set("MEMO")` を実行する
-        // - 逆に, このコンポーネントのタブの状態変更は行わない
-        //   - 上部の `$mode.subscribe` の中でタブのアクティブ状態を更新するので不要.
+        // クリックされたタブのテキスト（MEMO または TODO）を取得
+        const selectedMode = tab.textContent.trim();
+
+        // `$mode` ストアに新しいモードを設定
+        // これにより subscribe している全コンポーネントに通知が行く
+        $mode.set(selectedMode);
       });
     });
   }
