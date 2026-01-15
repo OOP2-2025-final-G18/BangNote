@@ -1,3 +1,3 @@
 # BangNote
 
-see: [frontend](./frontend/README.md)
+# see: [spec](./spec), [frontend](./frontend/README.md)
