@@ -56,14 +56,10 @@ export class NoteDetailInput extends HTMLElement {
     document.addEventListener("color-change", this.handleColorChange);
 
     // $noteDetail 変更監視（購読解除関数を保存）
-    this.unsubscribeEffect = effect(() => {
-      const note = $noteDetail.get();
+    this.unsubscribeEffect = $noteDetail.subscribe((note) => {
+      if (this.isUpdatingFromStore) return;
 
-      if (this.isUpdatingFromStore) {
-        return;
-      }
-
-      if ($mode.get() === "TODO" && note?.content) {
+      if ($mode.get() === "TODO" && Array.isArray(note?.content)) {
         this.isUpdatingFromStore = true;
         this.todoArea.innerHTML = "";
         note.content.forEach((t) => this.addTodoRow(t.text, t.done));
