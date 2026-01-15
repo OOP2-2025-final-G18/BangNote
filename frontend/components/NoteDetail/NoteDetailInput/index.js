@@ -196,6 +196,19 @@ export class NoteDetailInput extends HTMLElement {
           updateStore();
           $mode.set("MEMO");
           this.updateView();
+
+          // ★ MEMOモードに切り替わった後、textareaにフォーカス
+          setTimeout(() => {
+            if (this.textarea) {
+              this.textarea.focus();
+              // カーソルを末尾に移動
+              this.textarea.setSelectionRange(
+                this.textarea.value.length,
+                this.textarea.value.length
+              );
+            }
+          }, 0);
+
           return;
         }
 
