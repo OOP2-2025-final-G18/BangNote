@@ -63,6 +63,23 @@ export class NoteDetailOption extends HTMLElement {
     if (label) label.textContent = mode === "TODO" ? "締切日" : "通知日";
   }
 
+  /**
+   * 飛行機マークを表示させるかどうか
+   * @param {Note} note 
+   * @returns {boolean}
+   */
+  #shouldShowAirplane(note) {
+    if(note.type === "MEMO"){
+      return note.content.trim().length > 0;
+    }
+    if(note.type === "TODO"){
+      return note.content.length > 0
+    }
+
+    throw new Error("不明なタイプです");
+  }
+
+
   syncUI(note, liveText = null) {
     if (!note || !note.option) return;
 
@@ -75,14 +92,8 @@ export class NoteDetailOption extends HTMLElement {
     const btn = this.shadowRoot.querySelector(".add-btn");
     if (btn) {
       const textToCheck = liveText !== null ? liveText : (typeof note.content === "string" ? note.content : "");
-      
-      // TODOの場合は配列の中身、MEMOの場合はテキストの中身を確認
-      // 初期値 "asdf" は無視する
-      const hasContent = Array.isArray(note.content)
-        ? note.content.some(item => item.text && item.text.trim().length > 0 && !item.text.startsWith("asdf"))
-        : (textToCheck.trim().length > 0 && !textToCheck.startsWith("asdf"));
-
-      btn.innerHTML = hasContent ? icon.plane : icon.add;
+    
+      btn.innerHTML = this.#shouldShowAirplane(note) ? icon.plane : icon.add;
     }
   }
 
