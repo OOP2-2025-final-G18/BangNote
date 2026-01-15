@@ -107,7 +107,7 @@ export class NoteDetailInput extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <link rel="stylesheet" href="./components/NoteDetail/NoteDetailInput/style.css">
       <div class="content" data-note-type="${mode}">
-        <textarea placeholder="メモを入力...">${
+        <textarea autofocus placeholder="メモを入力...">${
           mode === "MEMO" ? note?.content ?? "" : ""
         }</textarea>
         <div class="todo-area ${mode === "TODO" ? "" : "hidden"}"></div>
@@ -116,6 +116,11 @@ export class NoteDetailInput extends HTMLElement {
 
     this.textarea = this.shadowRoot.querySelector("textarea");
     this.todoArea = this.shadowRoot.querySelector(".todo-area");
+
+    if (mode === "MEMO") {
+      // ★ 必ず文字列を代入（null/undefined防止）
+      this.textarea.value = note?.content ?? "";
+    }
   }
 
   updateView() {
@@ -132,13 +137,25 @@ export class NoteDetailInput extends HTMLElement {
   detectCommandFromMemo() {
     if (!this.textarea) return;
     const lines = this.textarea.value.split("\n");
-    const lastLine = lines[lines.length - 1];
+    const firstLine = lines[0];
 
-    if (lastLine === "!TODO") {
+    if (firstLine === "!TODO") {
       lines.pop();
       this.textarea.value = lines.join("\n");
       $mode.set("TODO");
       this.updateView();
+    }
+    if (firstLine === "!MEMO") {
+      lines.pop();
+      // ストアも更新
+      const current = $noteDetail.get();
+      $noteDetail.set({ ...current, content: "" });
+
+      setTimeout(() => {
+        this.textarea.value = "";
+        this.textarea.focus();
+        this.textarea.setSelectionRange(0, 0);
+      }, 0);
     }
   }
 
