@@ -4,6 +4,7 @@
   width: 100%;
   box-sizing: border-box;
   border: 2px solid;
+  position: relative;
 }
 
 /* =========================
@@ -12,8 +13,13 @@
 .content {
   display: flex;
   flex-direction: column;
-  height: 100%;
   width: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 /* =========================
@@ -29,6 +35,8 @@ textarea {
   font-size: 1.2rem;
   outline: none;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 
   /* ★ ここ重要：MEMO の背景は textarea に付ける */
   background: #ffffff;
@@ -42,6 +50,7 @@ textarea {
   padding: 20px;
   box-sizing: border-box;
   overflow-y: auto;
+  min-height: 0;
 
   /* ★ TODO の背景は todo-area に付ける */
   background: #ffffff;
@@ -113,4 +122,28 @@ textarea.green {
 
 :host:has(.content[data-note-type="TODO"]) {
   border-color: blue;
+}
+
+/* =========================
+  スクロールバー表示
+========================= */
+textarea::-webkit-scrollbar,
+.todo-area::-webkit-scrollbar {
+  width: 12px;
+}
+
+textarea::-webkit-scrollbar-track,
+.todo-area::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+textarea::-webkit-scrollbar-thumb,
+.todo-area::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover,
+.todo-area::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

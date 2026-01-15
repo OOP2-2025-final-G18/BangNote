@@ -59,12 +59,17 @@ export class NoteDetailInput extends HTMLElement {
     this.unsubscribeEffect = $noteDetail.subscribe((note) => {
       if (this.isUpdatingFromStore) return;
 
-      if ($mode.get() === "TODO" && Array.isArray(note?.content)) {
+      // ★ MEMOモード時の初期値読み込み対応
+      if ($mode.get() === "MEMO" && typeof note?.content === "string") {
         this.isUpdatingFromStore = true;
-        this.todoArea.innerHTML = "";
-        note.content.forEach((t) => this.addTodoRow(t.text, t.done));
+        if (this.textarea) {
+          this.textarea.value = note.content;
+        }
         this.isUpdatingFromStore = false;
       }
+
+      // TODOモード時は再レンダリングしない（自分自身の更新なので）
+      // 初期ロード時のみ処理する
     });
 
     this.updateView();
@@ -103,7 +108,7 @@ export class NoteDetailInput extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <link rel="stylesheet" href="./components/NoteDetail/NoteDetailInput/style.css">
       <div class="content" data-note-type="${mode}">
-        <textarea autofocus placeholder="メモを入力...">${
+        <textarea placeholder="メモを入力...">${
           mode === "MEMO" ? note?.content ?? "" : ""
         }</textarea>
         <div class="todo-area ${mode === "TODO" ? "" : "hidden"}"></div>
@@ -116,17 +121,40 @@ export class NoteDetailInput extends HTMLElement {
     if (mode === "MEMO") {
       // ★ 必ず文字列を代入（null/undefined防止）
       this.textarea.value = note?.content ?? "";
+      // ★ 明示的にフォーカス
+      setTimeout(() => {
+        this.textarea?.focus();
+      }, 0);
     }
   }
 
   updateView() {
+    const note = $noteDetail.get();
+
     if ($mode.get() === "TODO") {
       this.textarea?.classList.add("hidden");
       this.todoArea.classList.remove("hidden");
-      if (this.todoArea.children.length === 0) this.addTodoRow();
+
+      // ★ 初期値がある場合は読み込む
+      if (this.todoArea.children.length === 0) {
+        if (Array.isArray(note?.content) && note.content.length > 0) {
+          note.content.forEach((t, index) => {
+            // ★ 最後の行だけフォーカスする
+            const isLast = index === note.content.length - 1;
+            this.addTodoRow(t.text, t.completed, isLast);
+          });
+        } else {
+          this.addTodoRow("", false, true);
+        }
+      }
     } else {
       this.textarea?.classList.remove("hidden");
       this.todoArea.classList.add("hidden");
+
+      // ★ MEMO初期値の読み込み
+      if (this.textarea && typeof note?.content === "string") {
+        this.textarea.value = note.content;
+      }
     }
   }
 
@@ -155,7 +183,7 @@ export class NoteDetailInput extends HTMLElement {
     }
   }
 
-  addTodoRow(text = "", done = false) {
+  addTodoRow(text = "", done = false, shouldFocus = true) {
     const row = document.createElement("div");
     row.className = "todo-row";
 
@@ -173,12 +201,13 @@ export class NoteDetailInput extends HTMLElement {
         return;
       }
 
-      const todos = [...this.todoArea.querySelectorAll(".todo-row")]
-        .map((r) => ({
+      const todos = [...this.todoArea.querySelectorAll(".todo-row")].map(
+        (r) => ({
           text: r.querySelector("input[type=text]").value,
-          done: r.querySelector("input[type=checkbox]").checked,
-        }))
-        .filter((todo) => todo.text.trim() !== "");
+          completed: r.querySelector("input[type=checkbox]").checked,
+        })
+      );
+      // ★ 空のテキストも保存する（フィルタリングしない）
 
       $noteDetail.set({ ...$noteDetail.get(), content: todos });
     };
@@ -229,12 +258,13 @@ export class NoteDetailInput extends HTMLElement {
           clearTimeout(this.updateStoreTimeoutId);
           updateStore();
         }
-        this.addTodoRow();
+        this.addTodoRow("", false, true); // ★ Enterで追加する時はフォーカスする
       }
 
-      if ((e.key === "Backspace" || e.key === "Delete") && input.value === "") {
+      if (e.key === "Backspace" && input.value === "") {
         e.preventDefault();
 
+        // ★ 最後の1行は削除しない（常に1行は残す）
         if (this.todoArea.children.length > 1) {
           const prevRow = row.previousElementSibling;
 
@@ -261,7 +291,11 @@ export class NoteDetailInput extends HTMLElement {
     row.appendChild(checkbox);
     row.appendChild(input);
     this.todoArea.appendChild(row);
-    input.focus();
+
+    // ★ shouldFocusがtrueの時だけフォーカスする
+    if (shouldFocus) {
+      input.focus();
+    }
   }
 
   changeColor(color) {
