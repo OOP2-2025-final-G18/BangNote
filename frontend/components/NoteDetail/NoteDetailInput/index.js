@@ -6,6 +6,13 @@ export class NoteDetailInput extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
+    this.isUpdatingFromStore = false;
+    this.updateStoreTimeoutId = null;
+    this.handleKeydown = null;
+    this.handleColorChange = null;
+    this.unsubscribeMode = null;
+    this.unsubscribeEffect = null;
+    this.handleInput = null;
   }
 
   connectedCallback() {
@@ -13,35 +20,84 @@ export class NoteDetailInput extends HTMLElement {
     this.textarea = this.shadowRoot.querySelector("textarea");
     this.todoArea = this.shadowRoot.querySelector(".todo-area");
 
-    // MEMO/TODO切替の監視
-    $mode.subscribe(() => {
+    // イベント委譲でtextareaのinputイベントを監視
+    this.handleInput = (e) => {
+      if (e.target.tagName === "TEXTAREA") {
+        const current = $noteDetail.get();
+        $noteDetail.set({ ...current, content: e.target.value });
+      }
+    };
+    this.shadowRoot.addEventListener("input", this.handleInput);
+
+    // MEMO/TODO切替の監視（購読解除関数を保存）
+    this.unsubscribeMode = $mode.subscribe(() => {
       this.render();
       this.textarea = this.shadowRoot.querySelector("textarea");
       this.todoArea = this.shadowRoot.querySelector(".todo-area");
       this.updateView();
-      this.setupEvents();
     });
 
-    // MEMOのコマンド監視
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && this.textarea) {
+    // MEMOのコマンド監視（ハンドラーを保存）
+    this.handleKeydown = (e) => {
+      if (
+        e.key === "Enter" &&
+        this.textarea &&
+        this.shadowRoot.activeElement === this.textarea
+      ) {
         this.detectCommandFromMemo();
       }
-    });
+    };
+    document.addEventListener("keydown", this.handleKeydown);
 
-    // 色変更イベント
-    document.addEventListener("color-change", (e) => {
+    // 色変更イベント（ハンドラーを保存）
+    this.handleColorChange = (e) => {
       this.changeColor(e.detail.color);
-    });
+    };
+    document.addEventListener("color-change", this.handleColorChange);
 
-    // $noteDetail 変更監視（TODOレンダリング）
-    effect(() => {
+    // $noteDetail 変更監視（購読解除関数を保存）
+    this.unsubscribeEffect = effect(() => {
       const note = $noteDetail.get();
+
+      if (this.isUpdatingFromStore) {
+        return;
+      }
+
       if ($mode.get() === "TODO" && note?.content) {
+        this.isUpdatingFromStore = true;
         this.todoArea.innerHTML = "";
         note.content.forEach((t) => this.addTodoRow(t.text, t.done));
+        this.isUpdatingFromStore = false;
       }
     });
+
+    this.updateView();
+  }
+
+  disconnectedCallback() {
+    // イベントリスナーの削除
+    if (this.handleKeydown) {
+      document.removeEventListener("keydown", this.handleKeydown);
+    }
+    if (this.handleColorChange) {
+      document.removeEventListener("color-change", this.handleColorChange);
+    }
+    if (this.handleInput) {
+      this.shadowRoot.removeEventListener("input", this.handleInput);
+    }
+
+    // ストア購読の解除
+    if (this.unsubscribeMode) {
+      this.unsubscribeMode();
+    }
+    if (this.unsubscribeEffect) {
+      this.unsubscribeEffect();
+    }
+
+    // デバウンスタイマーのクリア
+    if (this.updateStoreTimeoutId) {
+      clearTimeout(this.updateStoreTimeoutId);
+    }
   }
 
   render() {
@@ -60,17 +116,6 @@ export class NoteDetailInput extends HTMLElement {
 
     this.textarea = this.shadowRoot.querySelector("textarea");
     this.todoArea = this.shadowRoot.querySelector(".todo-area");
-
-    this.updateView();
-    this.setupEvents();
-  }
-
-  setupEvents() {
-    if (!this.textarea) return;
-    this.textarea.addEventListener("input", () => {
-      const current = $noteDetail.get();
-      $noteDetail.set({ ...current, content: this.textarea.value });
-    });
   }
 
   updateView() {
@@ -111,33 +156,68 @@ export class NoteDetailInput extends HTMLElement {
     input.placeholder = "TODOを入力";
 
     const updateStore = () => {
-      const todos = [...this.todoArea.querySelectorAll(".todo-row")].map(
-        (r) => ({
+      if (this.isUpdatingFromStore) {
+        return;
+      }
+
+      const todos = [...this.todoArea.querySelectorAll(".todo-row")]
+        .map((r) => ({
           text: r.querySelector("input[type=text]").value,
           done: r.querySelector("input[type=checkbox]").checked,
-        })
-      );
+        }))
+        .filter((todo) => todo.text.trim() !== "");
+
       $noteDetail.set({ ...$noteDetail.get(), content: todos });
     };
 
+    const updateStoreDebounced = () => {
+      if (this.updateStoreTimeoutId) {
+        clearTimeout(this.updateStoreTimeoutId);
+      }
+      this.updateStoreTimeoutId = setTimeout(updateStore, 200);
+    };
+
     checkbox.addEventListener("change", updateStore);
-    input.addEventListener("input", updateStore);
+
+    input.addEventListener("input", () => {
+      updateStoreDebounced();
+    });
+
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
+
+        // ★ !MEMOコマンドの検知（Enterキー押下時）
+        if (input.value === "!MEMO") {
+          input.value = "";
+          if (this.updateStoreTimeoutId) {
+            clearTimeout(this.updateStoreTimeoutId);
+          }
+          updateStore();
+          $mode.set("MEMO");
+          this.updateView();
+          return;
+        }
+
+        if (this.updateStoreTimeoutId) {
+          clearTimeout(this.updateStoreTimeoutId);
+          updateStore();
+        }
         this.addTodoRow();
       }
 
-      //空の状態でBackspace/Deleteを押したら削除
       if ((e.key === "Backspace" || e.key === "Delete") && input.value === "") {
         e.preventDefault();
 
-        // 最後の1つは残す
         if (this.todoArea.children.length > 1) {
           const prevRow = row.previousElementSibling;
+
+          if (this.updateStoreTimeoutId) {
+            clearTimeout(this.updateStoreTimeoutId);
+          }
+
           row.remove();
 
-          // 前の行にフォーカス移動
           if (prevRow) {
             const prevInput = prevRow.querySelector("input[type=text]");
             prevInput?.focus();
@@ -150,19 +230,12 @@ export class NoteDetailInput extends HTMLElement {
           updateStore();
         }
       }
-
-      if (input.value === "!MEMO") {
-        $mode.set("MEMO");
-        this.updateView();
-      }
     });
 
     row.appendChild(checkbox);
     row.appendChild(input);
     this.todoArea.appendChild(row);
     input.focus();
-
-    updateStore();
   }
 
   changeColor(color) {
