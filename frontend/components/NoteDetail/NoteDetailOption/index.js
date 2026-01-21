@@ -97,7 +97,7 @@ export class NoteDetailOption extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = `
-      <link rel="stylesheet" href="/frontend/components/NoteDetail/NoteDetailOption/style.css">
+      <link rel="stylesheet" href="./components/NoteDetail/NoteDetailOption/style.css">
       <div class="control-area">
         <div class="colors">
           <div class="color white" data-color="white"></div>
@@ -117,19 +117,26 @@ export class NoteDetailOption extends HTMLElement {
 
   setupEvents() {
     // カラーパレット
-    const colorMap = { white: "#FFFFFF", red: "#f2c6c6", blue: "#d6e2f5", green: "#dbead4", };
+    const colorMap = {
+      white: "#FFFFFF",
+      red: "#f2c6c6",
+      blue: "#d6e2f5",
+      green: "#dbead4",
+    };
     this.shadowRoot.querySelectorAll(".color").forEach((el) => {
       el.addEventListener("click", () => {
-        const selected = el.dataset.color; // 例: "red" 
-        const hexColor = colorMap[selected]; // 例: "#f2c6c6" 
+        const selected = el.dataset.color; // 例: "red"
+        const hexColor = colorMap[selected]; // 例: "#f2c6c6"
 
         if (!hexColor) return;
-        
+
         $noteDetail.set({
           ...$noteDetail.get(),
-          option: { ...$noteDetail.get().option, 
+          option: {
+            ...$noteDetail.get().option,
             // 色に対応したからコードを `color` プロパティーに代入する
-            color: hexColor },
+            color: hexColor,
+          },
         });
       });
     });

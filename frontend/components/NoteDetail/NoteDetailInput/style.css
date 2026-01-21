@@ -4,33 +4,146 @@
   width: 100%;
   box-sizing: border-box;
   border: 2px solid;
-
-  .content {
-    height: 100%;
-    width: 100%;
-
-    textarea {
-      width: 100%;
-      height: 100%;
-      border: none;
-      resize: none;
-      padding: 20px;
-      box-sizing: border-box;
-      font-size: 1.2rem;
-      outline: none;
-    }
-  }
+  position: relative;
 }
 
-/* メモのときのスタイル */
+/* =========================
+  共通レイアウト
+========================= */
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* =========================
+  MEMO
+========================= */
+textarea {
+  width: 100%;
+  height: 100%;
+  border: none;
+  resize: none;
+  padding: 20px;
+  box-sizing: border-box;
+  font-size: 1.2rem;
+  outline: none;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+
+  /* ★ ここ重要：MEMO の背景は textarea に付ける */
+  background: #ffffff;
+}
+
+/* =========================
+  TODO
+========================= */
+.todo-area {
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  min-height: 0;
+
+  /* ★ TODO の背景は todo-area に付ける */
+  background: #ffffff;
+}
+
+.todo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.todo-row input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
+.todo-row input[type="text"] {
+  flex: 1;
+  border: none;
+  font-size: 1.1rem;
+  outline: none;
+  background: transparent;
+}
+
+/* =========================
+  非表示制御
+========================= */
+.hidden {
+  display: none;
+}
+
+/* =========================
+  カラーバリエーション
+========================= */
+/* MEMO */
+textarea.white {
+  background: #ffffff;
+}
+textarea.red {
+  background: #f2c6c6;
+}
+textarea.blue {
+  background: #d6e2f5;
+}
+textarea.green {
+  background: #dbead4;
+}
+
+/* TODO */
+.todo-area.white {
+  background: #ffffff;
+}
+.todo-area.red {
+  background: #f2c6c6;
+}
+.todo-area.blue {
+  background: #d6e2f5;
+}
+.todo-area.green {
+  background: #dbead4;
+}
+
+/* =========================
+  モード別枠線（確認用）
+========================= */
 :host:has(.content[data-note-type="MEMO"]) {
-  /* 分かりやすいようにとりあえず赤枠にしています */
   border-color: red;
 }
 
-/* TODO のときのスタイル */
 :host:has(.content[data-note-type="TODO"]) {
-  /* 分かりやすいようにとりあえず青枠にしています */
   border-color: blue;
 }
- 
+
+/* =========================
+  スクロールバー表示
+========================= */
+textarea::-webkit-scrollbar,
+.todo-area::-webkit-scrollbar {
+  width: 12px;
+}
+
+textarea::-webkit-scrollbar-track,
+.todo-area::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+textarea::-webkit-scrollbar-thumb,
+.todo-area::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover,
+.todo-area::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
