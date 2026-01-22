@@ -63,14 +63,13 @@ import noteSample from "../assets/note-sample.json" with { type: "json" };
  **/
 export const $notes = atom([]);
 
-
 /**
  * ### ノート詳細の初期値
- * 
+ *
  * ---
- * 
+ *
  * モードの変更時などでノート詳細に初期値をセットするために使う
- * 
+ *
  * @type {{ [mode in Mode]: NoteDetailWith<mode> }}
  */
 const noteDetailInit = {
@@ -86,13 +85,17 @@ const noteDetailInit = {
     type: "TODO",
     content: [
       {
-        text: "asdf1",
+        text: "BangNote: シンプルな Web ノートアプリ",
         completed: false,
       },
       {
-        text: "asdf2",
+        text: "SheBang でコマンドのようにモードを切り替え",
         completed: false,
-      }
+      },
+      {
+        text: "",
+        completed: false,
+      },
     ],
     option: {
       color: "#FFFFFF",
@@ -158,6 +161,11 @@ const noteDetailInit = {
  */
 export const $noteDetail = atom(noteDetailInit.MEMO);
 
+/**
+ * ### 選択中のノートIDを管理するストア
+ * @type {WritableAtom<string | null>}
+ */
+export const $selectedNoteId = atom(null);
 
 $mode.subscribe((mode) => {
   console.log("  -> [$noteDetail] モード変更検知:", mode);

@@ -23,7 +23,7 @@ export class NoteList extends HTMLElement {
       //
       // - `MEMO` モードが選択されているとき (= `$mode` が `"MEMO"` のとき) はメモノートのみ表示
       // - `TODO` モードが選択されているとき (= `$mode` が `"TODO"` のとき) はTODOノートのみ表示
-      this.render(notes);
+      this.render(notes.filter((note) => note.type === mode));
     });
   }
 

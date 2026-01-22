@@ -27,11 +27,20 @@ export class NoteDetailOption extends HTMLElement {
     this.unsubscribeMode = $mode.subscribe((mode) => {
       this.updateLabel(mode);
     });
+
+    // 3. ショートカットキーの登録
+    this.handleKeydown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        this.shadowRoot.querySelector(".add-btn").click();
+      }
+    };
+    window.addEventListener("keydown", this.handleKeydown);
   }
 
   disconnectedCallback() {
     this.unsubscribeNote?.();
     this.unsubscribeMode?.();
+    window.removeEventListener("keydown", this.handleKeydown);
   }
 
   // --- 外部の NoteDetailInput を直接操作する ---

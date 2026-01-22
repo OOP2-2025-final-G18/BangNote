@@ -1,10 +1,13 @@
 :host {
   display: block;
   aspect-ratio: 3 / 4;
-  border: 2px solid #000;
+  outline: 2px solid #000;
   position: relative;
   background: #fff;
   cursor: pointer;
+  max-height: 200px;
+  overflow: hidden;
+  font-size: 0.8rem;
 
   &:hover {
     background: #f9f9f9;
@@ -20,14 +23,27 @@
   }
 }
 
-/* メモモードのときのスタイル */
-:host:has(.content[data-note-type="MEMO"]) {
-  /* 分かりやすいようにとりあえず赤枠にしています */
-  border-color: red;
+/* 選択されているときのスタイル */
+:host([selected]) {
+  outline-width: 4px;
 }
 
-/* TODOモードのときのスタイル */
-:host:has(.content[data-note-type="TODO"]) {
-  /* 分かりやすいようにとりあえず青枠にしています */
-  border-color: blue;
+.content {
+  padding: 10px;
+  height: 100%;
+  font-family: monospace;
+  box-sizing: border-box;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
 }

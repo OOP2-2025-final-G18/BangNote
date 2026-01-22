@@ -1,10 +1,13 @@
 :host {
-  display: block;
+  overflow-y: auto;
+  background: white;
+  border: 2px solid #000;
+  height: calc(100% - 2px); /* 謎の 2px... */
 
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-    padding: 10px;
+    gap: 16px;
+    padding: 16px;
   }
 }

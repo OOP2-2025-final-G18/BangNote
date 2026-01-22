@@ -12,8 +12,10 @@ export class BangNoteApp extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <link rel="stylesheet" href="./components/BangNoteApp/style.css">
       <type-switch></type-switch>
-      <note-list></note-list>
-      <note-detail></note-detail>
+      <div>
+        <note-list></note-list>
+        <note-detail></note-detail>
+      </div>
     `;
   }
 }
